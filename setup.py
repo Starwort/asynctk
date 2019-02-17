@@ -6,7 +6,7 @@ with open("README.md") as file:
 setup(
     name="asynctk",
     version="0.0.1a",
-    author="Starwort",
+    author='Starwort',
     description="An asynchronous wrapper for TK/TCL using TKInter and AsyncIO",
     long_description=long_desc,
     long_description_content_type="text/markdown",
