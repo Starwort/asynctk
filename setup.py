@@ -14,9 +14,9 @@ setup(
     classifiers=[
         "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
-        "License :: OSI Approved :: GNU GPL 3.0",
         "Operating System :: OS Independent",
     ],
     install_requires=["asyncio"],
+    license="GNU General Public Licence 3.0",
     download_url = 'https://github.com/Starwort/asynctk'
 )
