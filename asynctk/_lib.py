@@ -7,6 +7,7 @@ WRITEABLE = WRITABLE
 
 _varnum = 0
 
+
 def _tkerror(err):
     """Internal function."""
     pass
@@ -1428,7 +1429,7 @@ class AsyncTk(AsyncMisc, Wm):
         self._tclCommands.append("exit")
         if _support_default_root and not _default_root:
             _default_root = self
-        self.protocol("WM_DELETE_WINDOW", lambda: asyncio.ensure_future(self.destroy))
+        self.protocol("WM_DELETE_WINDOW", lambda: asyncio.ensure_future(self.destroy()))
 
     async def tick(self):
         """COROUTINE."""
@@ -1579,7 +1580,7 @@ class AsyncToplevel(AsyncTk):
         root = self._root
         self.iconname(root.iconname())
         self.title(root.title())
-        self.protocol("WM_DELETE_WINDOW", lambda: asyncio.ensure_future(self.destroy))
+        self.protocol("WM_DELETE_WINDOW", lambda: asyncio.ensure_future(self.destroy()))
 
 
 class AsyncButton(AsyncWidget):
@@ -1600,8 +1601,13 @@ class AsyncButton(AsyncWidget):
             command, compound, default, height,
             overrelief, state, width
         """
+        if cnf.get("callback"):
+            cnf["command"] = cnf["callback"]
+            del cnf["callback"]
+        if cnf.get("command"):
+            self._callback = cnf["command"]
+            cnf["command"] = lambda *i: asyncio.ensure_future(cnf["command"](*i))
         AsyncWidget.__init__(self, master, "button", cnf, kw)
-        self._callback = cnf.get("command") or cnf.get("callback")
 
     def flash(self):
         """Flash the button.
