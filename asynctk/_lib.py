@@ -888,6 +888,7 @@ class AsyncMisc:
         async def runme():
             while True:
                 await self.tick()
+                await asyncio.sleep(0.01)
 
         loop.run_until_complete(runme())
 
@@ -1601,18 +1602,22 @@ class AsyncButton(AsyncWidget):
             command, compound, default, height,
             overrelief, state, width
         """
+
+        def newcallback(*i):
+            asyncio.ensure_future(self._callback(*i))
+
         if cnf.get("callback"):
             cnf["command"] = cnf["callback"]
             del cnf["callback"]
         if cnf.get("command"):
             self._callback = cnf["command"]
-            cnf["command"] = lambda *i: asyncio.ensure_future(cnf["command"](*i))
+            cnf["command"] = newcallback
         if kw.get("callback"):
             kw["command"] = kw["callback"]
             del kw["callback"]
         if kw.get("command"):
             self._callback = kw["command"]
-            kw["command"] = lambda *i: asyncio.ensure_future(kw["command"](*i))
+            kw["command"] = newcallback
         AsyncWidget.__init__(self, master, "button", cnf, kw)
 
     def flash(self):
