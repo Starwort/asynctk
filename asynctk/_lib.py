@@ -1607,6 +1607,12 @@ class AsyncButton(AsyncWidget):
         if cnf.get("command"):
             self._callback = cnf["command"]
             cnf["command"] = lambda *i: asyncio.ensure_future(cnf["command"](*i))
+        if kw.get("callback"):
+            kw["command"] = kw["callback"]
+            del kw["callback"]
+        if kw.get("command"):
+            self._callback = kw["command"]
+            kw["command"] = lambda *i: asyncio.ensure_future(kw["command"](*i))
         AsyncWidget.__init__(self, master, "button", cnf, kw)
 
     def flash(self):
