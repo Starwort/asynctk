@@ -5,6 +5,7 @@ import asyncio
 CENTRE = CENTER
 WRITEABLE = WRITABLE
 
+_varnum = 0
 
 def _tkerror(err):
     """Internal function."""
@@ -26,6 +27,104 @@ class AsyncTKException(TclError):
 
 _support_default_root = 1
 _default_root = None
+
+_magic_re = re.compile(r"([\\{}])")
+_space_re = re.compile(r"([\s])", re.ASCII)
+
+
+def _join(value):
+    """Internal function."""
+    return " ".join(map(_stringify, value))
+
+
+def _stringify(value):
+    """Internal function."""
+    if isinstance(value, (list, tuple)):
+        if len(value) == 1:
+            value = _stringify(value[0])
+            if _magic_re.search(value):
+                value = "{%s}" % value
+        else:
+            value = "{%s}" % _join(value)
+    else:
+        value = str(value)
+        if not value:
+            value = "{}"
+        elif _magic_re.search(value):
+            # add '\' before special characters and spaces
+            value = _magic_re.sub(r"\\\1", value)
+            value = value.replace("\n", r"\n")
+            value = _space_re.sub(r"\\\1", value)
+            if value[0] == '"':
+                value = "\\" + value
+        elif value[0] == '"' or _space_re.search(value):
+            value = "{%s}" % value
+    return value
+
+
+def _flatten(seq):
+    """Internal function."""
+    res = ()
+    for item in seq:
+        if isinstance(item, (tuple, list)):
+            res = res + _flatten(item)
+        elif item is not None:
+            res = res + (item,)
+    return res
+
+
+try:
+    _flatten = _tkinter._flatten
+except AttributeError:
+    pass
+
+
+def _cnfmerge(cnfs):
+    """Internal function."""
+    if isinstance(cnfs, dict):
+        return cnfs
+    elif isinstance(cnfs, (type(None), str)):
+        return cnfs
+    else:
+        cnf = {}
+        for c in _flatten(cnfs):
+            try:
+                cnf.update(c)
+            except (AttributeError, TypeError) as msg:
+                print("_cnfmerge: fallback due to:", msg)
+                for k, v in c.items():
+                    cnf[k] = v
+        return cnf
+
+
+try:
+    _cnfmerge = _tkinter._cnfmerge
+except AttributeError:
+    pass
+
+
+def _splitdict(tk, v, cut_minus=True, conv=None):
+    """Return a properly formatted dict built from Tcl list pairs.
+    If cut_minus is True, the supposed '-' prefix will be removed from
+    keys. If conv is specified, it is used to convert values.
+    Tcl list is expected to contain an even number of elements.
+    """
+    t = tk.splitlist(v)
+    if len(t) % 2:
+        raise RuntimeError(
+            "Tcl list representing a dict is expected "
+            "to contain an even number of elements"
+        )
+    it = iter(t)
+    dict = {}
+    for key, value in zip(it, it):
+        key = str(key)
+        if cut_minus and key[0] == "-":
+            key = key[1:]
+        if conv:
+            value = conv(value)
+        dict[key] = value
+    return dict
 
 
 class AsyncMisc:
