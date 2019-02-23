@@ -889,7 +889,8 @@ class AsyncMisc:
             while True:
                 try:
                     await self.tick()
-                except: return
+                except:
+                    return
                 await asyncio.sleep(0.01)
 
         loop.run_until_complete(runme())
