@@ -887,7 +887,9 @@ class AsyncMisc:
 
         async def runme():
             while True:
-                await self.tick()
+                try:
+                    await self.tick()
+                except: return
                 await asyncio.sleep(0.01)
 
         loop.run_until_complete(runme())
@@ -1573,7 +1575,7 @@ class AsyncWidget(AsyncBaseWidget, Pack, Place, Grid):
 class AsyncToplevel(AsyncTk):
     """Toplevel widget, e.g. for dialogs."""
 
-    def __init__(self, name, master=None, cnf={}, **kw):
+    def __init__(self, master=None, cnf={}, **kw):
         """Construct a toplevel widget with the parent MASTER."""
         self._root = master
         master.tl_children.append(self)
