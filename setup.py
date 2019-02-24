@@ -24,7 +24,8 @@ AsyncTK's window is used as TK's is, it's created, and components are placed ont
 ### Future improvements
 
 - Make coroutines the default for callbacks
-- Ensure there is no widget lag'''
+- Ensure there is no widget lag
+- Submodules'''
 
 setup(
     name="asynctk",
