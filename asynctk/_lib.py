@@ -1439,13 +1439,18 @@ class AsyncTk(AsyncMisc, Wm):
         """COROUTINE."""
         self.update()
         for i in self.tl_children:
-            await i.tick()
+            try:
+                await i.tick()
+            except:
+                pass
 
     async def destroy(self):
         """Destroy this and all descendants widgets. This will
         end the application of this Tcl interpreter. COROUTINE."""
         self.is_destroyed = True
         for c in list(self.children.values()):
+            await c.destroy()
+        for c in self.tl_children:
             await c.destroy()
         self.tk.call("destroy", self._w)
         await AsyncMisc.destroy(self)
