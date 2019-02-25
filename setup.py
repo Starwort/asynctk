@@ -1,6 +1,6 @@
 from distutils.core import setup
 
-long_desc = '''# AsyncTK
+long_desc = """# AsyncTK
 
 [![Licence: GPL v3](https://img.shields.io/badge/Licence-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
@@ -25,12 +25,12 @@ AsyncTK's window is used as TK's is, it's created, and components are placed ont
 
 - Make coroutines the default for callbacks
 - Ensure there is no widget lag
-- Submodules'''
+- Submodules"""
 
 setup(
     name="asynctk",
-    version="2019.02.24.rev1",
-    author='Starwort',
+    version="2019.02.25.rev2",
+    author="Starwort",
     description="An asynchronous wrapper for TK/TCL using TKInter and AsyncIO",
     long_description=long_desc,
     long_description_content_type="text/markdown",
@@ -42,5 +42,5 @@ setup(
     ],
     install_requires=["asyncio"],
     license="GNU General Public Licence 3.0",
-    download_url = 'https://github.com/Starwort/asynctk'
+    download_url="https://github.com/Starwort/asynctk",
 )

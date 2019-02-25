@@ -1451,7 +1451,8 @@ class AsyncTk(AsyncMisc, Wm):
         for c in list(self.children.values()):
             await c.destroy()
         for c in self.tl_children:
-            await c.destroy()
+            if not c.is_destroyed:
+                await c.destroy()
         self.tk.call("destroy", self._w)
         await AsyncMisc.destroy(self)
         global _default_root
