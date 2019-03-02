@@ -25,11 +25,12 @@ AsyncTK's window is used as TK's is, it's created, and components are placed ont
 
 - Make coroutines the default for callbacks
 - Ensure there is no widget lag
-- Submodules"""
+- Submodules
+- Stability"""
 
 setup(
     name="asynctk",
-    version="2019.02.25.rev2",
+    version="2019.03.02.rev3",
     author="Starwort",
     description="An asynchronous wrapper for TK/TCL using TKInter and AsyncIO",
     long_description=long_desc,

@@ -1451,8 +1451,16 @@ class AsyncTk(AsyncMisc, Wm):
         for c in list(self.children.values()):
             await c.destroy()
         for c in self.tl_children:
-            if not c.is_destroyed:
+            try:
                 await c.destroy()
+            except _tkinter.TclError as e:
+                if (
+                    str(e)
+                    == 'can\'t invoke "destroy" command: application has been destroyed'
+                ):
+                    continue
+                else:
+                    raise
         self.tk.call("destroy", self._w)
         await AsyncMisc.destroy(self)
         global _default_root
