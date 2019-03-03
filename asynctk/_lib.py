@@ -1449,7 +1449,10 @@ class AsyncTk(AsyncMisc, Wm):
         end the application of this Tcl interpreter. COROUTINE."""
         self.is_destroyed = True
         for c in list(self.children.values()):
-            await c.destroy()
+            try:
+                await c.destroy()
+            except:
+                pass
         for c in self.tl_children:
             try:
                 await c.destroy()
