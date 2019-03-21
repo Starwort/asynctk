@@ -203,15 +203,13 @@ class AsyncMisc:
         while not window.is_destroyed:
             await asyncio.sleep(0.01)
 
-    async def wait_visibility(self, window=None):
+    def wait_visibility(self, window=None):
         """Wait until the visibility of a WIDGET changes
-        (e.g. it appears). COROUTINE.
+        (e.g. it appears).
         If no parameter is given self is used."""
         if window is None:
             window = self
-        vis = window.visibility
-        while window.visibility != vis:
-            await asyncio.sleep(0.01)
+        self.tk.call("tkwait", "visibility", window._w)
 
     def setvar(self, name="PY_VAR", value="1"):
         """Set Tcl variable NAME to VALUE."""
@@ -411,7 +409,9 @@ class AsyncMisc:
         """Set grab for this widget.
         A grab directs all events to this and descendant
         widgets in the application."""
-        self.tk.call("grab", "set", self._w)
+        threading.Thread(
+            functools.partial(self.tk.call, "grab", "set", self._w)
+        ).start()
 
     def grab_set_global(self):
         """Set global grab for this widget.
