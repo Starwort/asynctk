@@ -3,3 +3,10 @@ README
 setup.py
 asynctk\__init__.py
 asynctk\_lib.py
+asynctk\colourchooser.py
+asynctk\commondialogue.py
+asynctk\dialogue.py
+asynctk\filedialogue.py
+asynctk\font.py
+asynctk\messagebox.py
+asynctk\scrolledtext.py

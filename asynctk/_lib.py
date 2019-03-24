@@ -306,49 +306,21 @@ class AsyncMisc:
             return None
         return self._nametowidget(name)
 
-    async def after(self, ms, func=None, *args, iscoro=False):
-        """Call function once after given time. COROUTINE.
+    def after(self, ms, func=None, *args, iscoro=True):
+        """Call function once after given time.
         MS specifies the time in milliseconds. FUNC gives the
-        function which shall be called. Additional parameters
-        are given as parameters to the function call.  Return
-        identifier to cancel scheduling with after_cancel."""
-        if not func:
+        function which shall be called. ISCORO specifies if it
+        is a coroutine. Additional parameters
+        are given as parameters to the function call. Return
+        task to cancel scheduling with Task.cancel()"""
+        async def callit():
             await asyncio.sleep(ms * 0.001)
-            return None
-        else:
+            if not iscoro:
+                return func(*args)
+            else:
+                return await func(*args)
 
-            async def callit():
-                await asyncio.sleep(ms * 0.001)
-                if not iscoro:
-                    return func(*args)
-                else:
-                    return await func(*args)
-
-            return asyncio.ensure_future(callit())
-
-    def after_idle(self, func, *args):
-        """Call FUNC once if the Tcl main loop has no event to
-        process.
-        Return an identifier to cancel the scheduling with
-        after_cancel."""
-        return self.after("idle", func, *args)
-
-    def after_cancel(self, id):
-        """Cancel scheduling of function identified with ID.
-        Identifier returned by after or after_idle must be
-        given as first parameter.
-        """
-        if not id:
-            raise ValueError(
-                "id must be a valid identifier returned from " "after or after_idle"
-            )
-        try:
-            data = self.tk.call("after", "info", id)
-            script = self.tk.splitlist(data)[0]
-            self.deletecommand(script)
-        except TclError:
-            pass
-        self.tk.call("after", "cancel", id)
+        return self.loop.create_task(callit())
 
     def bell(self, displayof=0):
         """Ring a display's bell."""
@@ -883,7 +855,8 @@ class AsyncMisc:
 
     def mainloop(self, n=0):
         """Call the mainloop of Tk."""
-        loop = asyncio.get_event_loop()
+        if not self.loop:
+            self.loop = asyncio.get_event_loop()
 
         async def runme():
             while True:
@@ -893,7 +866,7 @@ class AsyncMisc:
                     return
                 await asyncio.sleep(0.01)
 
-        loop.run_until_complete(runme())
+        self.loop.run_until_complete(runme())
 
     def quit(self):
         """Quit the Tcl interpreter. All widgets will be destroyed."""
@@ -1368,13 +1341,14 @@ class AsyncTk(AsyncMisc, Wm):
     _w = "."
 
     def __init__(
-        self, screenName=None, baseName=None, className="Tk", useTk=1, sync=0, use=None
+        self, loop=None, screenName=None, baseName=None, className="Tk", useTk=1, sync=0, use=None
     ):
         """Return a new Toplevel widget on screen SCREENNAME. A new Tcl interpreter will
         be created. BASENAME will be used for the identification of the profile file (see
         readprofile).
         It is constructed from sys.argv[0] without extensions if None is given. CLASSNAME
         is the name of the widget class."""
+        self.loop = loop
         self.master = None
         self.children = {}
         self._tkloaded = 0
