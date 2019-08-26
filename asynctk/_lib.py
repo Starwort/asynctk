@@ -1348,7 +1348,7 @@ class AsyncTk(AsyncMisc, Wm):
         readprofile).
         It is constructed from sys.argv[0] without extensions if None is given. CLASSNAME
         is the name of the widget class."""
-        Tk.__init__(screenName, baseName, className, useTk, sync, use)
+        Tk.__init__(self, screenName, baseName, className, useTk, sync, use)
         self.loop = loop
         self.master = None
         self.children = {}
