@@ -30,7 +30,7 @@ AsyncTK's window is used as TK's is, it's created, and components are placed ont
 
 setup(
     name="asynctk",
-    version="2019.03.24.rev6",
+    version="2019.08.26.rev7",
     author="Starwort",
     description="An asynchronous wrapper for TK/TCL using TKInter and AsyncIO",
     long_description=long_desc,

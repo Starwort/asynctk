@@ -59,3 +59,9 @@ target/
 
 # twine script
 upload.bat
+
+# mypy
+.mypy_cache/
+
+# vscode
+.vscode/

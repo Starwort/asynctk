@@ -2,7 +2,7 @@
 
 [![Licence: GPL v3](https://img.shields.io/badge/Licence-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
-## What is AsyncTK?
+## What is AsyncTK
 
 AsyncTK is an asynchronous wrapper for TK/TCL using TKInter and AsyncIO.
 It can:
